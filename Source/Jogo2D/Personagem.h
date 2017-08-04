@@ -20,6 +20,13 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void SetupPlayerInputComponent(class UInputComponent*
+		PlayerInputComponent) override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	void UpdateFlipbook();
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -33,5 +40,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		class UPaperFlipbook* Walking;
+
+	void Move(float Value);
 	
 };

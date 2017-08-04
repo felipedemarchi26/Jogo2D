@@ -32,3 +32,46 @@ void APersonagem::BeginPlay()
 		GetSprite()->SetFlipbook(Idle);
 	}
 }
+
+void APersonagem::SetupPlayerInputComponent(UInputComponent * 
+	PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAxis("Move", this, &APersonagem::Move);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this,
+		&APersonagem::Jump);
+
+}
+
+void APersonagem::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (GetVelocity().X > 0) {
+		GetSprite()->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
+	} else if (GetVelocity().X < 0) {
+		GetSprite()->SetWorldRotation(FRotator(0.0f, 180.0f, 0.0f));
+	}
+
+	UpdateFlipbook();
+
+}
+
+void APersonagem::UpdateFlipbook()
+{
+
+	if (GetVelocity().X != 0) {
+		GetSprite()->SetFlipbook(Walking);
+	} else {
+		GetSprite()->SetFlipbook(Idle);
+	}
+
+}
+
+void APersonagem::Move(float Value)
+{
+	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+}
+
+
