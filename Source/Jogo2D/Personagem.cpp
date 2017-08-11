@@ -8,6 +8,8 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "Gun.h"
 
 APersonagem::APersonagem() {
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>
@@ -20,6 +22,10 @@ APersonagem::APersonagem() {
 	Camera->ProjectionMode = ECameraProjectionMode::Orthographic;
 	Camera->OrthoWidth = 2048.0f;
 	Camera->SetupAttachment(CameraBoom);
+
+	Gun = CreateDefaultSubobject
+		<UChildActorComponent>(TEXT("Gun"));
+	Gun->SetupAttachment(GetSprite());
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
@@ -41,6 +47,10 @@ void APersonagem::SetupPlayerInputComponent(UInputComponent *
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this,
 		&APersonagem::Jump);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed,
+		this, &APersonagem::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released,
+		this, &APersonagem::StopFire);
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this,
 		&APersonagem::TouchStarted);
@@ -71,6 +81,28 @@ void APersonagem::UpdateFlipbook()
 		GetSprite()->SetFlipbook(Idle);
 	}
 
+}
+
+void APersonagem::StartFire()
+{
+
+	if (Gun != nullptr) {
+		if (Gun->GetChildActor()->IsA(AGun::StaticClass())) {
+			AGun* GunCast = Cast<AGun>(Gun->GetChildActor());
+			GunCast->StartFire();
+		}
+	}
+
+}
+
+void APersonagem::StopFire()
+{
+	if (Gun != nullptr) {
+		if (Gun->GetChildActor()->IsA(AGun::StaticClass())) {
+			AGun* GunCast = Cast<AGun>(Gun->GetChildActor());
+			GunCast->StopFire();
+		}
+	}
 }
 
 void APersonagem::Move(float Value)

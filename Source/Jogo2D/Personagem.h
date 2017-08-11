@@ -27,6 +27,10 @@ public:
 
 	void UpdateFlipbook();
 
+	void StartFire();
+
+	void StopFire();
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -40,6 +44,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		class UPaperFlipbook* Walking;
+
+	UPROPERTY(EditAnywhere)
+		class UChildActorComponent* Gun;
 
 	void Move(float Value);
 
