@@ -51,6 +51,8 @@ void APersonagem::SetupPlayerInputComponent(UInputComponent *
 		this, &APersonagem::StartFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released,
 		this, &APersonagem::StopFire);
+	PlayerInputComponent->BindAction("Switch", IE_Pressed,
+		this, &APersonagem::SwitchGun);
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this,
 		&APersonagem::TouchStarted);
@@ -121,6 +123,27 @@ void APersonagem::TouchStopped(const ETouchIndex::Type FinderIndex, const FVecto
 {
 
 	StopJumping();
+
+}
+
+void APersonagem::SwitchGun()
+{
+
+	if (Gun != nullptr &&
+		Gun->GetNumChildrenComponents() > 0) {
+
+		Gun->DestroyChildActor();
+
+	} else if (Gun != nullptr &&
+		Gun->GetNumChildrenComponents() == 0) {
+
+		/*Gun->SetChildActorClass(
+			StaticLoadClass(AGun::StaticClass(),
+				NULL, 
+				TEXT("Blueprint'/Game/Blueprints/GunBP.GunBP_C'")));*/
+		Gun->CreateChildActor();
+
+	}
 
 }
 

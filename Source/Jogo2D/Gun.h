@@ -39,6 +39,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class ABullet> BulletBP;
+
+	FTimerHandle KeepShotting;
 	
 	
 };

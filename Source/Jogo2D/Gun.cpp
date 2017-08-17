@@ -4,6 +4,7 @@
 #include "PaperSpriteComponent.h"
 #include "Engine/World.h"
 #include "Bullet.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 
 
 // Sets default values
@@ -38,12 +39,20 @@ void AGun::Tick(float DeltaTime)
 void AGun::StartFire()
 {
 	UE_LOG(LogTemp, Warning, TEXT("START FIRE"));
-	DoFire();
+	//DoFire();
+	UWorld* World = GetWorld();
+	if (World != nullptr) {
+		DoFire();
+		GetWorldTimerManager().SetTimer(
+			KeepShotting, this, &AGun::DoFire,
+			0.8f, true);
+	}
 }
 
 void AGun::StopFire()
 {
 	UE_LOG(LogTemp, Warning, TEXT("STOP FIRE"));
+	GetWorldTimerManager().ClearTimer(KeepShotting);
 }
 
 void AGun::DoFire()
@@ -55,7 +64,8 @@ void AGun::DoFire()
 			ABullet* Bullet = World->SpawnActor
 				<ABullet>(BulletBP,
 					RootComponent->GetComponentLocation(),
-					FRotator::ZeroRotator, SpawnParam);
+					RootComponent->GetComponentRotation(), 
+					SpawnParam);
 			AmmoAmount--;
 		}
 	}

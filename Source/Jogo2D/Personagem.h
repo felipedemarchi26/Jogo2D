@@ -55,5 +55,7 @@ private:
 
 	void TouchStopped(const ETouchIndex::Type FinderIndex,
 		const FVector Location);
+
+	void SwitchGun();
 	
 };
