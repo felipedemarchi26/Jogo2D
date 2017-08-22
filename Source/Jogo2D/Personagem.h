@@ -27,8 +27,9 @@ public:
 
 	void UpdateFlipbook();
 
+	UFUNCTION(BlueprintCallable, Category="Shoot")
 	void StartFire();
-
+	UFUNCTION(BlueprintCallable, Category = "Shoot")
 	void StopFire();
 
 private:
@@ -47,6 +48,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		class UChildActorComponent* Gun;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> HUDMobile;
 
 	void Move(float Value);
 

@@ -10,6 +10,13 @@
 #include "PaperFlipbookComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "Gun.h"
+#include "Blueprint/UserWidget.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 
 APersonagem::APersonagem() {
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>
@@ -36,6 +43,23 @@ void APersonagem::BeginPlay()
 
 	if (Idle) {
 		GetSprite()->SetFlipbook(Idle);
+	}
+
+	if (HUDMobile != NULL) {
+		UWorld* World = GetWorld();
+		if (World != nullptr) {
+			APlayerController* Controller =
+				UGameplayStatics::
+				GetPlayerController(World, 0);
+			if (Controller != nullptr) {
+				UUserWidget* UserWidget =
+					UWidgetBlueprintLibrary::Create
+					(World, HUDMobile, Controller);
+				if (UserWidget != nullptr) {
+					UserWidget->AddToViewport();
+				}
+			}
+		}
 	}
 }
 

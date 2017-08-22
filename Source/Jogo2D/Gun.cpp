@@ -45,7 +45,7 @@ void AGun::StartFire()
 		DoFire();
 		GetWorldTimerManager().SetTimer(
 			KeepShotting, this, &AGun::DoFire,
-			0.8f, true);
+			TimeRate, true);
 	}
 }
 
