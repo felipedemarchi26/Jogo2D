@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Shoot")
 	void StopFire();
 
+	void AddGunToArray(class AGun* Gun);
+	int GetSelectedGun();
+	TArray<class AGun*> GetGuns();
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -47,7 +51,10 @@ private:
 		class UPaperFlipbook* Walking;
 
 	UPROPERTY(EditAnywhere)
-		class UChildActorComponent* Gun;
+		TArray<class AGun*> Guns;
+
+	UPROPERTY(EditAnywhere)
+		int SelectedGun;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> HUDMobile;

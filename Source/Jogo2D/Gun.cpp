@@ -5,6 +5,8 @@
 #include "Engine/World.h"
 #include "Bullet.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Components/BoxComponent.h"
+#include "Personagem.h"
 
 
 // Sets default values
@@ -13,10 +15,16 @@ AGun::AGun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComp"));
+	CollisionComp->bGenerateOverlapEvents = true;
+	CollisionComp->SetCollisionProfileName("OverlapAllDynamic");
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AGun::OnOverlapBegin);
+	RootComponent = CollisionComp;
+
 	Sprite = CreateDefaultSubobject
 		<UPaperSpriteComponent>(TEXT("Sprite"));
 	Sprite->SetCollisionProfileName("NoCollision");
-	RootComponent = Sprite;
+	Sprite->SetupAttachment(RootComponent);
 
 
 }
@@ -81,5 +89,20 @@ void AGun::SetAmmoAmount(int NewAmount)
 int AGun::GetAmmoAmount()
 {
 	return AmmoAmount;
+}
+
+UBoxComponent * AGun::GetCollisionComp()
+{
+	return CollisionComp;
+}
+
+void AGun::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+
+	if (OtherActor != nullptr && OtherActor->IsA(APersonagem::StaticClass())) {
+		APersonagem* Personagem = Cast<APersonagem>(OtherActor);
+		Personagem->AddGunToArray(this);
+	}
+
 }
 

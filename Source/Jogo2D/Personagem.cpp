@@ -29,11 +29,7 @@ APersonagem::APersonagem() {
 	Camera->ProjectionMode = ECameraProjectionMode::Orthographic;
 	Camera->OrthoWidth = 2048.0f;
 	Camera->SetupAttachment(CameraBoom);
-
-	Gun = CreateDefaultSubobject
-		<UChildActorComponent>(TEXT("Gun"));
-	Gun->SetupAttachment(GetSprite());
-
+		
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
@@ -112,23 +108,57 @@ void APersonagem::UpdateFlipbook()
 void APersonagem::StartFire()
 {
 
-	if (Gun != nullptr) {
+	if (Guns.Num() > 0 && SelectedGun >= 0) {
+		Guns[SelectedGun]->StartFire();
+	}
+
+	/*if (Gun != nullptr) {
 		if (Gun->GetChildActor()->IsA(AGun::StaticClass())) {
 			AGun* GunCast = Cast<AGun>(Gun->GetChildActor());
 			GunCast->StartFire();
 		}
-	}
+	}*/
 
 }
 
 void APersonagem::StopFire()
 {
-	if (Gun != nullptr) {
+
+	if (Guns.Num() > 0 && SelectedGun >= 0) {
+		Guns[SelectedGun]->StopFire();
+	}
+
+	/*if (Gun != nullptr) {
 		if (Gun->GetChildActor()->IsA(AGun::StaticClass())) {
 			AGun* GunCast = Cast<AGun>(Gun->GetChildActor());
 			GunCast->StopFire();
 		}
+	}*/
+}
+
+void APersonagem::AddGunToArray(AGun * Gun)
+{
+	Gun->SetActorRelativeRotation(GetActorRotation());
+	Gun->GetCollisionComp()->SetCollisionProfileName("NoCollision");
+	Guns.Add(Gun);
+	FAttachmentTransformRules TransformRules(EAttachmentRule::KeepWorld, true);
+	Gun->AttachToComponent(GetSprite(), TransformRules);
+	Gun->SetActorRelativeLocation(FVector(45.0f, 0.0f, 10.0f));
+	int LastSelected = SelectedGun;
+	SelectedGun = Guns.Num()-1;
+	if (LastSelected >= 0) {
+		Guns[LastSelected]->SetActorHiddenInGame(true);
 	}
+}
+
+int APersonagem::GetSelectedGun()
+{
+	return SelectedGun;
+}
+
+TArray<class AGun*> APersonagem::GetGuns()
+{
+	return Guns;
 }
 
 void APersonagem::Move(float Value)
@@ -153,21 +183,36 @@ void APersonagem::TouchStopped(const ETouchIndex::Type FinderIndex, const FVecto
 void APersonagem::SwitchGun()
 {
 
-	if (Gun != nullptr &&
+	if (SelectedGun == Guns.Num() - 1) {
+		SelectedGun = -1;
+	} else {
+		SelectedGun++;
+	}
+
+	if (SelectedGun >= 0) {
+		Guns[SelectedGun]->SetActorHiddenInGame(false);
+		if (SelectedGun > 0) {
+			Guns[SelectedGun - 1]->SetActorHiddenInGame(true);
+		}
+	} else if (Guns.Num() > 0) {
+		Guns[Guns.Num() - 1]->SetActorHiddenInGame(true);
+	}
+
+	/*if (Gun != nullptr &&
 		Gun->GetNumChildrenComponents() > 0) {
 
 		Gun->DestroyChildActor();
 
 	} else if (Gun != nullptr &&
-		Gun->GetNumChildrenComponents() == 0) {
+		Gun->GetNumChildrenComponents() == 0) {*/
 
 		/*Gun->SetChildActorClass(
 			StaticLoadClass(AGun::StaticClass(),
 				NULL, 
 				TEXT("Blueprint'/Game/Blueprints/GunBP.GunBP_C'")));*/
-		Gun->CreateChildActor();
+		/*Gun->CreateChildActor();
 
-	}
+	}*/
 
 }
 

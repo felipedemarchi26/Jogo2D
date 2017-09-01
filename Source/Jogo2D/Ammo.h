@@ -4,49 +4,41 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Gun.generated.h"
+#include "Ammo.generated.h"
 
 UCLASS()
-class JOGO2D_API AGun : public AActor
+class JOGO2D_API AAmmo : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AGun();
+	AAmmo();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float TimeRate;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void StartFire();
-	virtual void StopFire();
-	virtual void DoFire();
-	void SetAmmoAmount(int NewAmount);
 	int GetAmmoAmount();
-	class UBoxComponent* GetCollisionComp();
+	void SetAmmoAmount(int NewAmmoAmount);
 
 private:
 
 	UPROPERTY(EditAnywhere)
-		int AmmoAmount;
+		class UBoxComponent* CollisionComp;
 
 	UPROPERTY(EditAnywhere)
 		class UPaperSpriteComponent* Sprite;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class ABullet> BulletBP;
+		TSubclassOf<class AGun> AmmoType;
 
 	UPROPERTY(EditAnywhere)
-		class UBoxComponent* CollisionComp;
-
-	FTimerHandle KeepShotting;
+		int AmmoAmount;
 
 	UFUNCTION()
 		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
